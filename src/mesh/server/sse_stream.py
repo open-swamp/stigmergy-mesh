@@ -8,8 +8,20 @@ class SSEEventFormatter:
     """
     @staticmethod
     def format_event(event: Event) -> str:
-        raise NotImplementedError("To be implemented by Jules")
+        lines = []
+        if event.id:
+            lines.append(f"id: {event.id}")
+        if event.topic:
+            lines.append(f"event: {event.topic}")
+        lines.append(f"data: {json.dumps(event.payload)}")
+        return "\n".join(lines) + "\n\n"
 
     @staticmethod
     def format_raw(event_type: str, data: Dict[str, Any], event_id: Optional[str] = None) -> str:
-        raise NotImplementedError("To be implemented by Jules")
+        lines = []
+        if event_id:
+            lines.append(f"id: {event_id}")
+        if event_type:
+            lines.append(f"event: {event_type}")
+        lines.append(f"data: {json.dumps(data)}")
+        return "\n".join(lines) + "\n\n"

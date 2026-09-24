@@ -1,5 +1,9 @@
 import argparse
+import json
 from typing import Dict, Any, Optional
+
+from mesh.storage.wal_engine import WALEngine
+from mesh.queues.priority_queue import PriorityQueueManager
 
 def build_parser() -> argparse.ArgumentParser:
     """Builds the CLI argument parser for Stigmergy-Mesh."""
@@ -20,7 +24,22 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 def handle_command(args: argparse.Namespace) -> Any:
-    raise NotImplementedError("To be implemented by Jules")
+    db_path = getattr(args, "db", "mesh.db")
+    wal = WALEngine(db_path)
+    wal.initialize_schema()
+    pq = PriorityQueueManager(wal)
+    
+    if args.command == "push":
+        raw_data = args.data
+        payload = json.loads(raw_data) if isinstance(raw_data, str) else raw_data
+        task = pq.push(queue=args.queue, payload=payload, priority=args.priority, delay_seconds=args.delay)
+        return {"status": "pushed", "task_id": task.id}
+    
+    if args.command == "pop":
+        task = pq.pop(queue=args.queue, lease_seconds=args.lease)
+        if task:
+            return task.to_dict()
+        return None
 
 def main() -> None:
     parser = build_parser()
