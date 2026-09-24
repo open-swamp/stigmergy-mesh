@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stigmergy-mesh"
+version = "0.1.0"
+description = "Ultra-lightweight SQLite-WAL Task & Event Broker for Multi-Agent Swarms"
+readme = "README.md"
+authors = [{ name = "open-swamp", email = "open-swamp@users.noreply.github.com" }]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+mesh = "mesh.cli.mesh_cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
